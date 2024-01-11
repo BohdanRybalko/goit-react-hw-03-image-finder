@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Searchbar from './components/Searchbar';
-import ImageGallery from './components/ImageGallery';
-import Button from './components/Button';
-import Loader from './components/Loader';
-import Modal from './components/Modal';
+import Searchbar from 'components/Searchbar';
+import ImageGallery from 'components/ImageGallery';
+import Button from 'components/Button';
+import Loader from 'components/Loader';
+import Modal from 'components/Modal';
 import styles from './styles.css';
 
 const apiKey = '41213027-c6be3d4375fb01bb774365854';
