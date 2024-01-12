@@ -6,7 +6,7 @@ import Loader from 'components/Loader';
 import Modal from 'components/Modal';
 import styles from '../styles.css';
 
-const apiKey = '41213027-c6be3d4375fb01bb774365854';
+const apiKey = 'https://pixabay.com/api/?key=41213027-c6be3d4375fb01bb774365854&q=yellow+flowers&image_type=photo';
 
 export const App = () => {
   const [query, setQuery] = useState('');
