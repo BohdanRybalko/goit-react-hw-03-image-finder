@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
+import styles from '../styles.css';
 
 const Modal = ({ imageURL, onClose }) => {
   useEffect(() => {
-    const handleKeyDown = e => {
+    const handleKeyDown = (e) => {
       if (e.code === 'Escape') {
         onClose();
       }
@@ -16,9 +17,9 @@ const Modal = ({ imageURL, onClose }) => {
   }, [onClose]);
 
   return (
-    <div className="overlay" onClick={onClose}>
-      <div className="modal">
-        <img src={imageURL} alt="" />
+    <div className={styles.Overlay} onClick={onClose}>
+      <div className={styles.Modal}>
+        <img className={styles.ModalImage} src={imageURL} alt="" />
       </div>
     </div>
   );
