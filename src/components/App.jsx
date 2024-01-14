@@ -6,66 +6,90 @@ import Loader from 'components/Loader';
 import Modal from 'components/Modal';
 import styles from '../styles.css';
 
-const apiKey = 'https://pixabay.com/api/?key=41213027-c6be3d4375fb01bb774365854&q=yellow+flowers&image_type=photo';
+const apiKey = '41213027-c6be3d4375fb01bb774365854';
 
-export const App = () => {
-  const [query, setQuery] = useState('');
-  const [images, setImages] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [modalImage, setModalImage] = useState('');
+export class App extends Component {
+  constructor() {
+    state = {
+      query: '',
+      images: [],
+      page: 1,
+      loading: false,
+      showModal: false,
+      modalImage: '',
+    };
+  }
 
-  useEffect(() => {
+  componentDidUpdate(prevProps, prevState) {
+    const { query, page } = this.state;
+
+    if (prevState.query !== query || prevState.page !== page) {
+      this.fetchData();
+    }
+  }
+
+  fetchData = async () => {
+    const { query, page } = this.state;
+
     if (!query) return;
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `https://pixabay.com/api/?q=${query}&page=${page}&key=${apiKey}&image_type=photo&orientation=horizontal&per_page=12`
-        );
-        const data = await response.json();
-        setImages((prevImages) => [...prevImages, ...data.hits]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [query, page]);
-
-  const handleSearch = (searchQuery) => {
-    setQuery(searchQuery);
-    setPage(1);
-    setImages([]);
+    try {
+      this.setState({ loading: true });
+      const response = await fetch(
+        `https://pixabay.com/api/?q=${query}&page=${page}&key=${apiKey}&image_type=photo&orientation=horizontal&per_page=12`
+      );
+      const data = await response.json();
+      this.setState((prevState) => ({
+        images: [...prevState.images, ...data.hits],
+      }));
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
-  const loadMoreImages = () => {
-    setPage((prevPage) => prevPage + 1);
+  handleSearch = (searchQuery) => {
+    this.setState({
+      query: searchQuery,
+      page: 1,
+      images: [],
+    });
   };
 
-  const openModal = (imageURL) => {
-    setShowModal(true);
-    setModalImage(imageURL);
+  loadMoreImages = () => {
+    this.setState((prevState) => ({
+      page: prevState.page + 1,
+    }));
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setModalImage('');
+  openModal = (imageURL) => {
+    this.setState({
+      showModal: true,
+      modalImage: imageURL,
+    });
   };
 
-  return (
-    <div className={styles.App}>
-      <Searchbar onSubmit={handleSearch} />
-      <ImageGallery images={images} onImageClick={openModal} />
-      {loading && <Loader />}
-      {images.length > 0 && !loading && <Button onLoadMore={loadMoreImages} />}
-      {showModal && <Modal imageURL={modalImage} onClose={closeModal} />}
-    </div>
-  );
-};
+  closeModal = () => {
+    this.setState({
+      showModal: false,
+      modalImage: '',
+    });
+  };
+
+  render() {
+    const { images, loading, showModal, modalImage } = this.state;
+
+    return (
+      <div className={styles.App}>
+        <Searchbar onSubmit={this.handleSearch} />
+        <ImageGallery images={images} onImageClick={this.openModal} />
+        {loading && <Loader />}
+        {images.length > 0 && !loading && <Button onLoadMore={this.loadMoreImages} />}
+        {showModal && <Modal imageURL={modalImage} onClose={this.closeModal} />}
+      </div>
+    );
+  }
+}
 
 export default App;
