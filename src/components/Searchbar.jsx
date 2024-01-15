@@ -2,18 +2,16 @@ import React, { Component } from 'react';
 import styles from '../styles.css';
 
 class Searchbar extends Component {
-  constructor() {
-    state = {
-      query: '',
-    };
-  }
-
-  handleChange = (e) => {
-    this.setState({ query: e.target.value });
+  state = {
+    query: '',
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
+  handleChange = (event) => {
+    this.setState({ query: event.target.value });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
     this.props.onSubmit(this.state.query);
   };
 
@@ -24,6 +22,7 @@ class Searchbar extends Component {
           <button type="submit" className={styles.SearchFormButton}>
             <span className={styles.SearchFormButtonLabel}>Search</span>
           </button>
+
           <input
             className={styles.SearchFormInput}
             type="text"

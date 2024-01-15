@@ -27,25 +27,26 @@ export class App extends Component {
   }
 
   fetchData = async () => {
-    const { query, page } = this.state;
+  const { query, page } = this.state;
 
-    if (!query) return;
+  if (!query) return;
 
-    try {
-      this.setState({ loading: true });
-      const response = await fetch(
-        `https://pixabay.com/api/?q=${query}&page=${page}&key=${apiKey}&image_type=photo&orientation=horizontal&per_page=12`
-      );
-      const data = await response.json();
-      this.setState((prevState) => ({
-        images: [...prevState.images, ...data.hits],
-      }));
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      this.setState({ loading: false });
-    }
-  };
+  try {
+    this.setState({ loading: true });
+    const response = await fetch(
+      `https://pixabay.com/api/?q=${query}&page=${page}&key=${apiKey}&image_type=photo&orientation=horizontal&per_page=12`
+    );
+    const data = await response.json();
+    this.setState((prevState) => ({
+      images: [...prevState.images, ...data.hits],
+    }));
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    this.setState({ loading: false });
+  }
+};
+
 
   handleSearch = (searchQuery) => {
     this.setState({
