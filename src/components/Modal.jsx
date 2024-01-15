@@ -28,7 +28,7 @@ class Modal extends Component {
     return (
       <div className={styles.Overlay} onClick={this.handleOverlayClick}>
         <div className={styles.Modal}>
-          <img src={imageURL} alt="Large version of the selected image" />
+          <img src={imageURL} alt="Large version" />
         </div>
       </div>
     );
