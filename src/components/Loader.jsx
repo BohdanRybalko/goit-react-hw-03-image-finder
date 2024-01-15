@@ -1,5 +1,6 @@
 import React from 'react';
-import * as LoaderSpinner from 'react-loader-spinner';
+import LoaderSpinner from 'react-loader-spinner';
+import styles from '../styles.css';
 
 
 const Loader = () => {
