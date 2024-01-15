@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import Searchbar from 'components/Searchbar';
 import ImageGallery from 'components/ImageGallery';
 import Button from 'components/Button';
@@ -9,16 +9,14 @@ import styles from '../styles.css';
 const apiKey = '41213027-c6be3d4375fb01bb774365854';
 
 export class App extends Component {
-  constructor() {
-    state = {
-      query: '',
-      images: [],
-      page: 1,
-      loading: false,
-      showModal: false,
-      modalImage: '',
-    };
-  }
+  state = {
+    query: '',
+    images: [],
+    page: 1,
+    loading: false,
+    showModal: false,
+    modalImage: '',
+  };
 
   componentDidUpdate(prevProps, prevState) {
     const { query, page } = this.state;
