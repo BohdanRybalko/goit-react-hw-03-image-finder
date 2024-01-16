@@ -43,11 +43,10 @@ export class App extends Component {
 
   fetchData = async () => {
     const { query, page } = this.state;
-    
 
     try {
       this.setState({ isLoading: true });
-      const images = await fetchData(query, page, apiKey);
+      const images = await fetchData(query, page);
 
       this.setState((prevState) => ({
         images: [...prevState.images, ...images],
