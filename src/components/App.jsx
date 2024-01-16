@@ -4,32 +4,33 @@ import ImageGallery from 'components/ImageGallery';
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import Modal from 'components/Modal';
-import fetchImages from './Api';
-import styles from '../styles.css';
+import { fetchData } from 'components/Api';
+import styled from 'styled-components';
+
+
+const AppContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 16px;
+  padding-bottom: 24px;
+`;
 
 export class App extends Component {
   state = {
     images: [],
     query: '',
     page: 1,
-    isLoading: false,
     showModal: false,
     selectedImage: '',
-    showBtn: false, 
+    isLoading: false,
   };
-    componentDidUpdate (prevState) {
-    const { query, page } = this.state;
 
-    if (prevState.query !== query || prevState.page !== page) {
-      this.fetchData();
-    }
-  } 
-  handleSearchSubmit = async (query) => {
-    this.setState({ query, page: 1, images: [], showBtn: false });
+  handleSubmit = (query) => {
+    this.setState({ query, page: 1, images: [] }, this.fetchData);
   };
 
   handleLoadMore = () => {
-    this.setState((prevState) => ({ page: prevState.page + 1 }));
+    this.setState((prevState) => ({ page: prevState.page + 1 }), this.fetchData);
   };
 
   handleImageClick = (selectedImage) => {
@@ -40,34 +41,35 @@ export class App extends Component {
     this.setState({ showModal: false, selectedImage: '' });
   };
 
-  fetchImages = async () => {
+  fetchData = async () => {
     const { query, page } = this.state;
+    
 
     try {
       this.setState({ isLoading: true });
-      const data = await fetchImages(query, page);
+      const images = await fetchData(query, page, apiKey);
+
       this.setState((prevState) => ({
-        images: [...prevState.images, ...data.hits],
-        showBtn: data.hits.length === 12,
+        images: [...prevState.images, ...images],
       }));
     } catch (error) {
-      console.error('Error fetching images:', error);
+      console.error('Error in fetchData:', error);
     } finally {
       this.setState({ isLoading: false });
     }
   };
 
   render() {
-    const { images, isLoading, showModal, selectedImage, showBtn } = this.state;
+    const { images, showModal, selectedImage, isLoading } = this.state;
 
     return (
-      <div className={styles.App}>
-        <Searchbar onSubmit={this.handleSearchSubmit} />
+      <AppContainer>
+        <Searchbar onSubmit={this.handleSubmit} />
         <ImageGallery images={images} onImageClick={this.handleImageClick} />
+        {images.length > 0 && !isLoading && <Button onLoadMore={this.handleLoadMore} />}
         {isLoading && <Loader />}
-        {images.length > 0 && showBtn && !isLoading && <Button onLoadMore={this.handleLoadMore} />}
-        {showModal && <Modal imageURL={selectedImage} onClose={this.handleCloseModal} />}
-      </div>
+        {showModal && <Modal imageURL={selectedImage.largeImageURL} onClose={this.handleCloseModal} />}
+      </AppContainer>
     );
   }
 }
