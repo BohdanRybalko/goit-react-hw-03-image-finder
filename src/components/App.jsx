@@ -7,7 +7,6 @@ import Modal from 'components/Modal';
 import { fetchData } from 'components/Api';
 import styled from 'styled-components';
 
-
 const AppContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -24,6 +23,14 @@ export class App extends Component {
     selectedImage: '',
     isLoading: false,
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { query, page } = this.state;
+
+    if (prevState.query !== query || prevState.page !== page) {
+      this.fetchData();
+    }
+  }
 
   handleSubmit = (query) => {
     this.setState({ query, page: 1, images: [] }, this.fetchData);
@@ -59,18 +66,23 @@ export class App extends Component {
   };
 
   render() {
-    const { images, showModal, selectedImage, isLoading } = this.state;
+  const { images, showModal, selectedImage, isLoading, totalHits, page } = this.state;
 
-    return (
-      <AppContainer>
-        <Searchbar onSubmit={this.handleSubmit} />
-        <ImageGallery images={images} onImageClick={this.handleImageClick} />
-        {images.length > 0 && !isLoading && <Button onLoadMore={this.handleLoadMore} />}
-        {isLoading && <Loader />}
-        {showModal && <Modal imageURL={selectedImage.largeImageURL} onClose={this.handleCloseModal} />}
-      </AppContainer>
-    );
-  }
+  return (
+    <AppContainer>
+      <Searchbar onSubmit={this.handleSubmit} />
+      <ImageGallery images={images} onImageClick={this.handleImageClick} />
+      {images.length > 0 && !isLoading && (
+        <Button onLoadMore={this.handleLoadMore} disabled={page >= Math.ceil(totalHits / 12)} />
+      )}
+      {isLoading && <Loader />}
+      {showModal && totalHits > 0 && (
+        <Modal imageURL={selectedImage.largeImageURL} onClose={this.handleCloseModal} />
+      )}
+    </AppContainer>
+  );
+}
+
 }
 
 export default App;
