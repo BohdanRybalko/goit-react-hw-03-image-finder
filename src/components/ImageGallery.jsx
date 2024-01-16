@@ -8,7 +8,6 @@ const ImageGallery = ({ images, onImageClick }) => (
     {images.map((image) => (
       <ImageGalleryItem key={image.id} image={image} onClick={onImageClick} />
     ))}
-    {images.length > 0 && <Modal imageURL={images[0].largeImageURL} onClose={() => {}} />}
   </ul>
 );
 

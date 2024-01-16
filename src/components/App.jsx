@@ -17,13 +17,19 @@ export class App extends Component {
     selectedImage: '',
     showBtn: false, 
   };
+    componentDidUpdate (prevState) {
+    const { query, page } = this.state;
 
+    if (prevState.query !== query || prevState.page !== page) {
+      this.fetchData();
+    }
+  } 
   handleSearchSubmit = async (query) => {
-    this.setState({ query, page: 1, images: [], showBtn: false }, () => this.fetchImages());
+    this.setState({ query, page: 1, images: [], showBtn: false });
   };
 
   handleLoadMore = () => {
-    this.setState((prevState) => ({ page: prevState.page + 1 }), () => this.fetchImages());
+    this.setState((prevState) => ({ page: prevState.page + 1 }));
   };
 
   handleImageClick = (selectedImage) => {
