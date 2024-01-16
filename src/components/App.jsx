@@ -15,10 +15,11 @@ export class App extends Component {
     isLoading: false,
     showModal: false,
     selectedImage: '',
+    showBtn: false, 
   };
 
   handleSearchSubmit = async (query) => {
-    this.setState({ query, page: 1, images: [] }, () => this.fetchImages());
+    this.setState({ query, page: 1, images: [], showBtn: false }, () => this.fetchImages());
   };
 
   handleLoadMore = () => {
@@ -41,6 +42,7 @@ export class App extends Component {
       const data = await fetchImages(query, page);
       this.setState((prevState) => ({
         images: [...prevState.images, ...data.hits],
+        showBtn: data.hits.length === 12,
       }));
     } catch (error) {
       console.error('Error fetching images:', error);
@@ -50,14 +52,14 @@ export class App extends Component {
   };
 
   render() {
-    const { images, isLoading, showModal, selectedImage } = this.state;
+    const { images, isLoading, showModal, selectedImage, showBtn } = this.state;
 
     return (
       <div className={styles.App}>
         <Searchbar onSubmit={this.handleSearchSubmit} />
         <ImageGallery images={images} onImageClick={this.handleImageClick} />
         {isLoading && <Loader />}
-        {images.length > 0 && !isLoading && <Button onLoadMore={this.handleLoadMore} />}
+        {images.length > 0 && showBtn && !isLoading && <Button onLoadMore={this.handleLoadMore} />}
         {showModal && <Modal imageURL={selectedImage} onClose={this.handleCloseModal} />}
       </div>
     );
