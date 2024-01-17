@@ -22,6 +22,7 @@ export class App extends Component {
     showModal: false,
     selectedImage: '',
     isLoading: false,
+    showBtn: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -33,12 +34,13 @@ export class App extends Component {
   }
 
   handleSubmit = (query) => {
-    this.setState({ query, page: 1, images: [] }, this.fetchData);
-  };
+  this.setState({ query, page: 1, images: [], showBtn: false });
+};
 
-  handleLoadMore = () => {
-    this.setState((prevState) => ({ page: prevState.page + 1 }), this.fetchData);
-  };
+handleLoadMore = () => {
+  this.setState((prevState) => ({ page: prevState.page + 1 }), this.fetchData);
+};
+
 
   handleImageClick = (selectedImage) => {
     this.setState({ showModal: true, selectedImage });
@@ -49,40 +51,42 @@ export class App extends Component {
   };
 
   fetchData = async () => {
-    const { query, page } = this.state;
+  const { query, page } = this.state;
 
-    try {
-      this.setState({ isLoading: true });
-      const images = await fetchData(query, page);
+  try {
+    this.setState({ isLoading: true });
+    const { hits: newImages, totalHits } = await fetchData(query, page);
 
-      this.setState((prevState) => ({
-        images: [...prevState.images, ...images],
-      }));
-    } catch (error) {
-      console.error('Error in fetchData:', error);
-    } finally {
-      this.setState({ isLoading: false });
-    }
-  };
+    this.setState((prevState) => ({
+      images: [...prevState.images, ...newImages],
+      showBtn: page < Math.ceil(totalHits / 12),
+    }));
+  } catch (error) {
+    console.error('Error in fetchData:', error);
+  } finally {
+    this.setState({ isLoading: false });
+  }
+};
 
-  render() {
-  const { images, showModal, selectedImage, isLoading, page } = this.state;
-  const { totalHits } = this.props;
+
+
+render() {
+  const { images, showModal, selectedImage, isLoading, showBtn } = this.state;
+
   return (
     <AppContainer>
       <Searchbar onSubmit={this.handleSubmit} />
       <ImageGallery images={images} onImageClick={this.handleImageClick} />
-      
-      {images.length > 0 && !isLoading && 
-        (showModal || (page < Math.ceil(totalHits / 12) && <Button onClick={this.handleLoadMore} />))
-      }
-      
+      {images.length > 0 && !isLoading && showBtn && (
+        <Button onLoadMore={this.handleLoadMore} />
+      )}
       {isLoading && <Loader />}
-      {showModal && <Modal imageURL={selectedImage.largeImageURL} onClose={this.handleCloseModal} />}
+      {showModal && (
+        <Modal imageURL={selectedImage.largeImageURL} onClose={this.handleCloseModal} />
+      )}
     </AppContainer>
   );
 }
-
 }
 
 export default App;
