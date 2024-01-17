@@ -5,7 +5,7 @@ const fetchData = async (query, page) => {
       `https://pixabay.com/api/?q=${query}&page=${page}&key=${apiKey}&image_type=photo&orientation=horizontal&per_page=12`
     );
     const data = await response.json();
-    return data.hits;
+    return data;
   } catch (error) {
     console.error('Error fetching data:', error);
     throw error; 
