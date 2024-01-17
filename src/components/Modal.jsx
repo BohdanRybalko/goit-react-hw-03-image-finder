@@ -47,7 +47,7 @@ class Modal extends Component {
   };
 
   render() {
-    const { imageURL, onClose } = this.props;
+    const { imageURL } = this.props;
     return (
       <Overlay onClick={this.handleOverlayClick}>
         <ModalContainer>
