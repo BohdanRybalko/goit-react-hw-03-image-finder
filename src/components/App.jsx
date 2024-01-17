@@ -22,7 +22,6 @@ export class App extends Component {
     showModal: false,
     selectedImage: '',
     isLoading: false,
-    totalHits: 0
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -50,37 +49,39 @@ export class App extends Component {
   };
 
   fetchData = async () => {
-  const { query, page } = this.state;
+    const { query, page } = this.state;
 
-  try {
-    this.setState({ isLoading: true });
-    const { images, totalHits } = await fetchData(query, page);
+    try {
+      this.setState({ isLoading: true });
+      const images = await fetchData(query, page);
 
-    this.setState((prevState) => ({
-      images: [...prevState.images, ...images],
-      totalHits,
-      showModal: prevState.page < Math.ceil(totalHits / 12),
-    }));
-  } catch (error) {
-    console.error('Error in fetchData:', error);
-  } finally {
-    this.setState({ isLoading: false });
-  }
-};
+      this.setState((prevState) => ({
+        images: [...prevState.images, ...images],
+      }));
+    } catch (error) {
+      console.error('Error in fetchData:', error);
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
+
   render() {
- const { images, showModal, selectedImage, isLoading,} = this.state;
-
-    return (
-      <AppContainer>
-        <Searchbar onSubmit={this.handleSubmit} />
-        <ImageGallery images={images} onImageClick={this.handleImageClick} />
-        {images.length > 0 && !isLoading && <Button onClick={this.handleLoadMore} />}
-        {isLoading && <Loader />}
-        {showModal && <Modal imageURL={selectedImage.largeImageURL} onClose={this.handleCloseModal} />}
-      </AppContainer>
-    );
-  }
-
+  const { images, showModal, selectedImage, isLoading, page } = this.state;
+  const { totalHits } = this.props;
+  return (
+    <AppContainer>
+      <Searchbar onSubmit={this.handleSubmit} />
+      <ImageGallery images={images} onImageClick={this.handleImageClick} />
+      
+      {images.length > 0 && !isLoading && 
+        (showModal || (page < Math.ceil(totalHits / 12) && <Button onClick={this.handleLoadMore} />))
+      }
+      
+      {isLoading && <Loader />}
+      {showModal && <Modal imageURL={selectedImage.largeImageURL} onClose={this.handleCloseModal} />}
+    </AppContainer>
+  );
+}
 
 }
 
