@@ -34,12 +34,11 @@ export class App extends Component {
   }
 
   handleSubmit = (query) => {
-  this.setState({ query, page: 1, images: [], showBtn: false });
-};
-
-handleLoadMore = () => {
-  this.setState((prevState) => ({ page: prevState.page + 1 }), this.fetchData);
-};
+    this.setState({ query, page: 1, images: [] });
+  };
+  handleLoadMore = () => {
+    this.setState((prevState) => ({ page: prevState.page + 1 }));
+  };
 
 
   handleImageClick = (selectedImage) => {
